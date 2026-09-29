@@ -49,8 +49,8 @@ async def write_research(
     if settings.has_llm:
         try:
             return await _llm_research(profile, data, processed, valuation)
-        except Exception as exc:
-            logger.warning("LLM research writing failed (%s); using template", exc)
+        except Exception:
+            logger.exception("LLM research writing failed; using template")
     return _template_research(profile, data, processed, valuation)
 
 
@@ -74,14 +74,14 @@ async def _llm_research(
     context = f"""
 COMPANY: {profile.name} ({profile.ticker}) | Sector: {profile.sector} | Industry: {profile.industry}
 RECOMMENDATION: {rec.recommendation} | Confidence: {rec.confidence}
-CURRENT PRICE: ${m.current_price:.2f if m.current_price else 0:.2f}
-FAIR VALUE (base): ${fv.base:.2f if fv.base else 0:.2f} | UPSIDE: {fv.upside_pct:+.1f if fv.upside_pct is not None else 0:.1f}%
+CURRENT PRICE: ${(m.current_price or 0):.2f}
+FAIR VALUE (base): ${(fv.base or 0):.2f} | UPSIDE: {(fv.upside_pct if fv.upside_pct is not None else 0):+.1f}%
 
 FINANCIAL SNAPSHOT (TTM):
   Revenue: {_fmt_b(m.ttm_revenue)} | Revenue Growth YoY: {_fmt_pct(r.revenue_growth)}
   Gross Margin: {_fmt_pct(r.gross_margin)} | Operating Margin: {_fmt_pct(r.operating_margin)}
   Net Margin: {_fmt_pct(r.net_margin)} | FCF Margin: {_fmt_pct(r.fcf_margin)}
-  EPS: ${m.ttm_eps:.2f if m.ttm_eps else 0:.2f} | FCF: {_fmt_b(m.ttm_fcf)}
+  EPS: ${(m.ttm_eps or 0):.2f} | FCF: {_fmt_b(m.ttm_fcf)}
 
 VALUATION vs SECTOR:
   P/E: {_fmt_x(r.pe)} vs sector median {_fmt_x(sm.pe if sm else None)}
