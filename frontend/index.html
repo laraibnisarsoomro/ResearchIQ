@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Equity Research Memo Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ── Landing ─────────────────────────────────────────────────────────────── -->
+<div id="landing">
+  <div class="ticker-tape">
+    <span class="tape-item">S&amp;P 500</span>
+    <span class="tape-dot">·</span>
+    <span class="tape-item">NASDAQ</span>
+    <span class="tape-dot">·</span>
+    <span class="tape-item">DOW JONES</span>
+    <span class="tape-dot">·</span>
+    <span class="tape-item">VIX</span>
+    <span class="tape-dot">·</span>
+    <span class="tape-item">10Y YIELD</span>
+    <span class="tape-dot">·</span>
+    <span class="tape-item">CRUDE OIL</span>
+    <span class="tape-dot">·</span>
+    <span class="tape-item">GOLD</span>
+  </div>
+
+  <!-- Live market index strip -->
+  <div class="market-strip">
+    <div class="mkt-tile"><div class="mkt-name">S&amp;P 500</div><div class="mkt-val" data-mkt="5847.20" data-drift="3.5">5847.20</div><div class="mkt-chg up">+0.52%</div></div>
+    <div class="mkt-tile"><div class="mkt-name">NASDAQ</div><div class="mkt-val" data-mkt="18420.10" data-drift="6.2">18420.10</div><div class="mkt-chg up">+0.78%</div></div>
+    <div class="mkt-tile"><div class="mkt-name">DOW</div><div class="mkt-val" data-mkt="42115.50" data-drift="8.1">42115.50</div><div class="mkt-chg down">−0.14%</div></div>
+    <div class="mkt-tile"><div class="mkt-name">VIX</div><div class="mkt-val" data-mkt="14.28" data-drift="0.12">14.28</div><div class="mkt-chg down">−1.20%</div></div>
+    <div class="mkt-tile"><div class="mkt-name">10Y</div><div class="mkt-val" data-mkt="4.32" data-drift="0.02">4.32%</div><div class="mkt-chg up">+0.04%</div></div>
+    <div class="mkt-tile"><div class="mkt-name">CRUDE</div><div class="mkt-val" data-mkt="78.40" data-drift="0.18">$78.40</div><div class="mkt-chg up">+0.91%</div></div>
+  </div>
+
+  <!-- Hero glow behind card -->
+  <div class="hero-glow" aria-hidden="true"></div>
+
+  <!-- Full-width background chart -->
+  <div class="landing-bg">
+    <!-- Main price-return line spanning full width, bottom half -->
+    <div class="bg-chart-main">
+      <svg viewBox="0 0 1440 340" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#2a79d3" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#2a79d3" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="chartFill2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1a7f64" stop-opacity="0.10"/>
+            <stop offset="100%" stop-color="#1a7f64" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- S&P 500 line (teal, behind) -->
+        <path d="M0,280 C60,275 100,268 160,260 C220,252 260,248 320,238 C380,228 420,230 480,218 C540,206 580,200 640,190 C700,180 740,175 800,162 C860,149 900,148 960,135 C1020,122 1060,120 1120,108 C1180,96 1220,95 1280,82 C1320,73 1380,68 1440,58 L1440,340 L0,340 Z"
+              fill="url(#chartFill2)" stroke="none"/>
+        <path d="M0,280 C60,275 100,268 160,260 C220,252 260,248 320,238 C380,228 420,230 480,218 C540,206 580,200 640,190 C700,180 740,175 800,162 C860,149 900,148 960,135 C1020,122 1060,120 1120,108 C1180,96 1220,95 1280,82 C1320,73 1380,68 1440,58"
+              fill="none" stroke="#1a7f64" stroke-width="1.5" stroke-opacity="0.35"/>
+        <!-- Stock line (blue, in front) -->
+        <path d="M0,300 C40,295 80,285 130,270 C180,255 220,258 280,242 C340,226 370,215 430,200 C490,185 530,188 590,168 C650,148 680,138 740,120 C800,102 840,105 900,88 C960,71 990,65 1050,48 C1110,31 1150,28 1210,14 C1250,4 1320,8 1370,2 C1400,-1 1420,0 1440,1 L1440,340 L0,340 Z"
+              fill="url(#chartFill)" stroke="none"/>
+        <path d="M0,300 C40,295 80,285 130,270 C180,255 220,258 280,242 C340,226 370,215 430,200 C490,185 530,188 590,168 C650,148 680,138 740,120 C800,102 840,105 900,88 C960,71 990,65 1050,48 C1110,31 1150,28 1210,14 C1250,4 1320,8 1370,2 C1400,-1 1420,0 1440,1"
+              fill="none" stroke="#2a79d3" stroke-width="2" stroke-opacity="0.55"/>
+        <!-- Horizontal reference lines -->
+        <line x1="0" y1="170" x2="1440" y2="170" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="0" y1="255" x2="1440" y2="255" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <!-- Candlestick decoration top-right -->
+    <div class="bg-candles">
+      <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+        <!-- Bullish candles (green) -->
+        <line x1="20" y1="30" x2="20" y2="140" stroke="#1a7f64" stroke-width="1.5"/>
+        <rect x="12" y="60" width="16" height="50" fill="#1a7f64" rx="1"/>
+        <line x1="50" y1="20" x2="50" y2="120" stroke="#1a7f64" stroke-width="1.5"/>
+        <rect x="42" y="45" width="16" height="55" fill="#1a7f64" rx="1"/>
+        <line x1="110" y1="15" x2="110" y2="100" stroke="#1a7f64" stroke-width="1.5"/>
+        <rect x="102" y="35" width="16" height="48" fill="#1a7f64" rx="1"/>
+        <line x1="170" y1="10" x2="170" y2="95" stroke="#1a7f64" stroke-width="1.5"/>
+        <rect x="162" y="28" width="16" height="45" fill="#1a7f64" rx="1"/>
+        <line x1="230" y1="5" x2="230" y2="85" stroke="#1a7f64" stroke-width="1.5"/>
+        <rect x="222" y="20" width="16" height="42" fill="#1a7f64" rx="1"/>
+        <line x1="290" y1="2" x2="290" y2="78" stroke="#1a7f64" stroke-width="1.5"/>
+        <rect x="282" y="15" width="16" height="40" fill="#1a7f64" rx="1"/>
+        <!-- Bearish candles (red) -->
+        <line x1="80" y1="45" x2="80" y2="150" stroke="#b92b27" stroke-width="1.5"/>
+        <rect x="72" y="72" width="16" height="48" fill="#b92b27" rx="1"/>
+        <line x1="140" y1="40" x2="140" y2="130" stroke="#b92b27" stroke-width="1.5"/>
+        <rect x="132" y="60" width="16" height="45" fill="#b92b27" rx="1"/>
+        <line x1="200" y1="30" x2="200" y2="115" stroke="#b92b27" stroke-width="1.5"/>
+        <rect x="192" y="50" width="16" height="40" fill="#b92b27" rx="1"/>
+        <line x1="260" y1="22" x2="260" y2="100" stroke="#b92b27" stroke-width="1.5"/>
+        <rect x="252" y="40" width="16" height="38" fill="#b92b27" rx="1"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="landing-card">
+    <div class="brand">
+      <div class="brand-icon">
+        <!-- Simple chart icon -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 17l4-4 4 4 4-5 4 2V20H3V17zm0-2.5l4-4 4 4 4-5 4 2V5a1 1 0 00-1-1H4a1 1 0 00-1 1v9.5z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">ResearchIQ</div>
+        <div class="brand-sub">Agentic Equity Research</div>
+      </div>
+    </div>
+
+    <h1 class="landing-title"><span class="title-grad">Instant Equity</span><br>Research Memos</h1>
+    <p class="landing-subtitle">
+      Enter any S&amp;P 500 ticker to generate a professional 1-page equity research
+      note with comparable valuation, sector benchmarking, and AI-powered synthesis.
+    </p>
+
+    <div class="feature-pills">
+      <span class="feat-pill"><span class="feat-dot"></span>AI-Powered</span>
+      <span class="feat-pill"><span class="feat-dot"></span>7-Stage Pipeline</span>
+      <span class="feat-pill"><span class="feat-dot"></span>Live Market Data</span>
+      <span class="feat-pill"><span class="feat-dot"></span>Sector Benchmarked</span>
+    </div>
+
+    <div class="input-row">
+      <input
+        id="ticker-input"
+        type="text"
+        placeholder="Enter ticker, e.g. AAPL"
+        maxlength="10"
+        autocomplete="off"
+        autocapitalize="characters"
+        spellcheck="false"
+      >
+      <button id="generate-btn" class="btn-primary">Generate Report</button>
+    </div>
+
+    <div class="example-tickers">
+      Try:
+      <span>AAPL</span>
+      <span>MSFT</span>
+      <span>JPM</span>
+      <span>XOM</span>
+      <span>JNJ</span>
+      <span>CAT</span>
+      <span>NVDA</span>
+      <span>GS</span>
+    </div>
+
+  </div>
+
+  <!-- Stat counter row -->
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hs-num" data-target="503">0</div>
+      <div class="hs-label">S&amp;P 500 Companies</div>
+    </div>
+    <div class="hero-stat-sep"></div>
+    <div class="hero-stat">
+      <div class="hs-num" data-target="11">0</div>
+      <div class="hs-label">GICS Sectors</div>
+    </div>
+    <div class="hero-stat-sep"></div>
+    <div class="hero-stat">
+      <div class="hs-num" data-target="7">0</div>
+      <div class="hs-label">Valuation Methods</div>
+    </div>
+    <div class="hero-stat-sep"></div>
+    <div class="hero-stat">
+      <div class="hs-num" data-target="60" data-suffix="s">0</div>
+      <div class="hs-label">Avg. Memo Time</div>
+    </div>
+  </div>
+
+  <!-- Bottom tape: course attribution -->
+  <div class="ticker-tape ticker-tape-bottom">
+    <span class="tape-item">ADV. QUANTITATIVE METHODS &amp; MACHINE LEARNING</span>
+    <span class="tape-dot">·</span>
+    <span class="tape-item">LARAIB NISAR</span>
+    <span class="tape-dot">·</span>
+    <span class="tape-item">PROF. ALI SANATI</span>
+    <span class="tape-dot">·</span>
+    <span class="tape-item">SPRING 2026</span>
+  </div>
+
+  <!-- Floating data orbs (subtle ambient animation) -->
+  <div class="landing-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Floating ticker chips (drifting upward) -->
+  <div class="floating-tickers" aria-hidden="true">
+    <span class="ft-chip" style="--d:0s;--x:8%">AAPL <em class="up">+1.2%</em></span>
+    <span class="ft-chip" style="--d:3s;--x:18%">NVDA <em class="up">+2.8%</em></span>
+    <span class="ft-chip" style="--d:6s;--x:78%">JPM <em class="down">−0.4%</em></span>
+    <span class="ft-chip" style="--d:9s;--x:88%">XOM <em class="up">+0.6%</em></span>
+    <span class="ft-chip" style="--d:12s;--x:14%">MSFT <em class="up">+0.9%</em></span>
+    <span class="ft-chip" style="--d:15s;--x:82%">GS <em class="down">−0.2%</em></span>
+  </div>
+</div>
+
+<!-- ── Progress ────────────────────────────────────────────────────────────── -->
+<div id="progress-area">
+  <div class="progress-card">
+    <div class="brand" style="margin-bottom:.75rem">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 17l4-4 4 4 4-5 4 2V20H3V17zm0-2.5l4-4 4 4 4-5 4 2V5a1 1 0 00-1-1H4a1 1 0 00-1 1v9.5z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">ResearchIQ</div>
+      </div>
+    </div>
+    <p style="font-size:.9rem;color:var(--gray-600);margin-bottom:.5rem">Running agentic research pipeline…</p>
+    <div class="progress-bar-track">
+      <div id="progress-fill" class="progress-bar-fill" style="width:0%"></div>
+    </div>
+    <div id="progress-label" class="progress-label">Initialising…</div>
+    <div id="progress-stage" class="progress-stage"></div>
+    <br>
+    <button class="btn-secondary" onclick="showLanding()">Cancel</button>
+  </div>
+</div>
+
+<!-- ── Report ───────────────────────────────────────────────────────────────── -->
+<div id="report-area">
+  <!-- Decorative side panels, populated dynamically per sector -->
+  <div id="report-deco-left"  class="report-deco report-deco-left"  aria-hidden="true"></div>
+  <div id="report-deco-right" class="report-deco report-deco-right" aria-hidden="true"></div>
+
+  <div class="report-toolbar">
+    <button id="new-search-btn" class="btn-secondary">← New Search</button>
+    <div style="display:flex;gap:.5rem">
+      <button id="print-btn" class="btn-secondary">🖨 Print / PDF</button>
+    </div>
+  </div>
+  <div id="report-container"></div>
+</div>
+
+<script src="/static/js/app.js"></script>
+<script src="/static/js/portfolio.js"></script>
+</body>
+</html>
