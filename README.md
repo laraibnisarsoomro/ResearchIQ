@@ -1,171 +1,150 @@
-# ResearchIQ — Setup & Usage Guide
+# ResearchIQ
 
-**FIN-680 Term Project — Advanced Quantitative Methods and Machine Learning**
-**Student:** Laraib Nisar &nbsp;·&nbsp; **Professor:** Ali Sanati
+**Automated equity research memos for S&P 500 constituents — in about 60 seconds.**
 
-ResearchIQ is a local web application that generates institutional-quality equity research memos for any S&P 500 stock and constructs hypothetical portfolios. The system runs entirely on a laptop — no cloud account or paid data subscription required.
+ResearchIQ takes a ticker and produces a full research memo: a valuation range, a
+Buy/Hold/Sell recommendation with a confidence level, peer-benchmarked financials,
+an investment thesis, risks, and catalysts. It also builds hypothetical portfolios
+from an investor questionnaire using CAPM-based expected returns.
 
-> **For the academic write-up, see [`PROPOSAL.md`](PROPOSAL.md). For technical architecture details, see [`SYSTEM_OVERVIEW.md`](SYSTEM_OVERVIEW.md).**
-
----
-
-## What You Need
-
-- **A Mac or Linux laptop** (Windows works too — see note at the end)
-- **Python 3.9 or newer** — check with `python3 --version` in Terminal
-   - If not installed, download from [python.org](https://www.python.org/downloads/)
-- **An internet connection** (the app fetches market data from Yahoo Finance)
-- **(Optional) An Anthropic API key** for AI-generated investment narratives. Without it, the app falls back to template-based prose and works fine.
+It runs entirely on a laptop. No cloud account, no paid data subscription.
 
 ---
 
-## Setup — Three Steps
+## The design question
 
-### 1. Open Terminal in the project folder
+Most "AI equity research" tools ask a language model to produce numbers. That is the
+wrong division of labour: a language model cannot be audited, and a valuation you
+cannot trace is a valuation you cannot defend.
+
+ResearchIQ splits the work along that line:
+
+- **Every number is computed in Python.** Multiples, fair value ranges, TTM figures,
+  sector benchmarks, portfolio weights. Deterministic, reproducible, and identical on
+  every run.
+- **Every recommendation follows explicit rules.** The Buy/Hold/Sell logic lives in
+  `backend/analytics/recommendation.py` and can be read in a few minutes. There is no
+  model deciding what to recommend.
+- **The language model only writes prose.** It receives the computed results and turns
+  them into narrative. It never originates a figure or a call.
+
+The result is a memo where every claim traces back to something you can check — and
+one that still degrades gracefully: with no API key configured, the narrative falls
+back to templates and everything else works unchanged.
+
+---
+
+## Pipeline
+
+Seven stages, one module each, in `backend/agents/`:
+
+| Stage | Module | Does |
+|---|---|---|
+| 1 | `ticker_resolver.py` | Resolves and validates the ticker |
+| 2 | `data_retrieval.py` | Pulls prices, financials, and company data |
+| 3 | `financial_processor.py` | Computes TTM figures and ratios |
+| 4 | `valuation_agent.py` | Comparable-multiple valuation against sector peers |
+| 5 | `research_writer.py` | Generates the narrative |
+| 6 | `report_composer.py` | Assembles the memo |
+| 7 | `qa_guardrail.py` | Checks the output before it is returned |
+
+Valuation uses P/E, P/B, P/S, P/FCF and EV/EBITDA with sector-specific weighting,
+benchmarked against up to 40 sector peers. The portfolio builder uses CAPM expected
+returns with a bounded valuation alpha, and a beta-weighted risk model with an
+idiosyncratic component.
+
+`SYSTEM_OVERVIEW.md` has the full architecture.
+
+---
+
+## What a memo contains
+
+- Company description and revenue model
+- Current price against a low/base/high fair value range, with upside or downside
+- Buy/Hold/Sell recommendation, confidence level, and the rationale behind it
+- One-year price chart against the S&P 500, plus monthly relative returns
+- Financial metrics benchmarked against sector peers
+- Investment thesis, key risks, and catalysts
+
+---
+
+## Running it
+
+Requires Python 3.9 or newer and an internet connection.
 
 ```bash
-cd path/to/equity_research_app
-```
-
-### 2. Run the setup script (one time only)
-
-```bash
+git clone https://github.com/laraibnisarsoomro/ResearchIQ.git
+cd ResearchIQ
 ./setup.sh
-```
-
-This script will:
-- Create a Python virtual environment in `.venv/`
-- Install all required Python packages (FastAPI, yfinance, pandas, etc.)
-- Copy `.env.example` → `.env` if not already present
-
-It takes about **2–3 minutes** the first time. You'll see "Setup complete!" when it's done.
-
-> **If `./setup.sh` says "permission denied":** run `chmod +x setup.sh` first, then `./setup.sh`.
-
-### 3. Start the app
-
-```bash
 python run.py
 ```
 
-You'll see:
-```
-ResearchIQ starting…  →  http://localhost:8000
-```
+Then open <http://localhost:8000>.
 
-Open your browser and go to **<http://localhost:8000>** — that's it.
+`setup.sh` creates a virtual environment in `.venv/`, installs dependencies, and
+copies `.env.example` to `.env`. It takes two or three minutes the first time.
+`Ctrl + C` stops the app.
 
-To stop the app, press **`Ctrl + C`** in the terminal.
-
----
-
-## How to Use the App
-
-### Generate an Equity Research Memo
-
-1. On the landing page, type any S&P 500 ticker (e.g., `AAPL`, `JPM`, `MSFT`, `NVDA`)
-2. Click **Generate Memo** (or press Enter)
-3. Watch the 7-stage progress bar — the full memo appears in about 60 seconds
-
-The memo includes: company description, current price vs. fair value range, Buy/Hold/Sell recommendation with confidence level, 1-year price chart vs. S&P 500, financial metrics benchmarked against sector peers, investment thesis bullets, key risks, and catalysts.
-
-### Build a Portfolio
-
-1. After generating any memo, scroll down and click **Build Portfolio Recommendation**
-2. Answer the 5-section questionnaire (investor profile, amount, risk tolerance, sectors, constraints)
-3. Click **Generate My Portfolio** on the last section
-
-You'll get a hypothetical portfolio with long (and possibly short) positions, expected return, volatility, Sharpe ratio, sector allocation, and a written rationale.
-
-> The questionnaire **remembers your answers** — if you want to tweak just one input (e.g., change sectors), reopen it and only change that field.
-
----
-
-## Optional: Enable AI-Generated Narratives
-
-By default the app uses template-based text for investment thesis and risks. To enable Claude-powered prose:
-
-1. Get an API key from [console.anthropic.com](https://console.anthropic.com/)
-2. Open the `.env` file in any text editor
-3. Replace `sk-ant-...` on the first line with your actual key
-4. Restart the app (`Ctrl + C`, then `python run.py` again)
-
-A typical memo costs about **$0.01–0.03** in API usage.
-
----
-
-## Troubleshooting
-
-**"Command not found: python3"**
-→ Python isn't installed. Get it from [python.org](https://www.python.org/downloads/).
-
-**"./setup.sh: permission denied"**
-→ Run `chmod +x setup.sh` first, then `./setup.sh`.
-
-**App says "No candidates available" when building a portfolio**
-→ The cache is empty. Generate a few equity memos first (try AAPL, MSFT, JPM, NVDA, GOOGL) — each one populates sector data. Or run `python seed_portfolio_data.py` to bulk-seed analyst data for ~150 popular S&P 500 tickers (takes ~5 minutes).
-
-**Port 8000 already in use**
-→ Another app is using port 8000. Either stop that app or edit the last line of `run.py` to use a different port (e.g., `port=8001`), then visit `http://localhost:8001`.
-
-**Browser shows old layout after I update something**
-→ Hard refresh: `Cmd + Shift + R` (Mac) or `Ctrl + Shift + R` (Windows/Linux).
-
----
-
-## Project Structure
+**Optional — LLM narratives.** The app works without an API key, using template prose.
+For generated narratives, put an Anthropic API key in `.env`:
 
 ```
-equity_research_app/
-├── PROPOSAL.md              ← The academic research proposal (main deliverable)
-├── SYSTEM_OVERVIEW.md       ← Technical architecture reference
-├── README.md                ← This file (setup + usage)
-├── run.py                   ← Launcher (use this to start the app)
-├── setup.sh                 ← One-time setup script
-├── seed_portfolio_data.py   ← Optional bulk-seeder for portfolio data
-├── requirements.txt         ← Python dependencies
-├── .env.example             ← Environment config template
-├── backend/                 ← FastAPI server + 7-stage agentic pipeline
-│   ├── agents/                  ← Pipeline stages (data, valuation, writer, QA)
-│   ├── analytics/               ← Financial calculation engine
-│   ├── data/                    ← yfinance + universe management
-│   ├── db/                      ← SQLite cache layer
-│   ├── models/                  ← Pydantic schemas
-│   ├── portfolio/               ← Portfolio construction logic
-│   └── main.py                  ← FastAPI app entry point
-├── frontend/                ← Single-page web UI (vanilla HTML/CSS/JS)
-│   ├── index.html
-│   ├── css/style.css
-│   └── js/app.js, portfolio.js
-└── data/                    ← Auto-created SQLite cache (yfinance data)
+ANTHROPIC_API_KEY=sk-ant-...
 ```
 
----
+Restart afterwards; `.env` is read at startup. A memo costs roughly $0.01–0.03.
 
-## Windows Users
-
-The setup script (`setup.sh`) is for Mac/Linux. On Windows, run these commands manually in PowerShell from the project folder:
+**Windows:** run the steps in `setup.sh` manually —
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\activate
-pip install --upgrade pip
 pip install -r requirements.txt
 copy .env.example .env
 python run.py
 ```
 
-Then open <http://localhost:8000> in your browser.
+---
+
+## Troubleshooting
+
+**`./setup.sh: permission denied`** — run `chmod +x setup.sh` first.
+
+**"No candidates available" when building a portfolio** — the cache is empty.
+Generate a few memos first, or run `python seed_portfolio_data.py` to seed data for
+around 150 tickers (about five minutes).
+
+**Port 8000 in use** — change the port on the last line of `run.py`.
 
 ---
 
-## Methods Summary
+## Limitations
 
-The system implements course methods including:
-- **Comparable-multiple valuation** (P/E, P/B, P/S, P/FCF, EV/EBITDA) with sector-specific weighting
-- **Rule-based recommendation engine** (transparent, auditable Buy/Hold/Sell logic)
-- **CAPM-based portfolio expected return** with bounded valuation alpha
-- **Beta-weighted portfolio risk model** with idiosyncratic component
-- **Agentic LLM workflow** for research narrative synthesis (separation of quantitative computation and qualitative writing)
+- **Data source.** Market data comes from Yahoo Finance via `yfinance`, which is free
+  but unaudited. Figures can be stale, restated, or missing, particularly for smaller
+  constituents.
+- **Valuation method.** Comparable multiples only. No DCF, no dividend discount model.
+  A company is valued against its sector peers, so a sector that is uniformly
+  mispriced will produce uniformly mispriced fair values.
+- **No qualitative judgement.** Management quality, competitive moat, regulatory risk,
+  and accounting quality are not modelled. A memo is a starting point for analysis,
+  not a substitute for it.
+- **Point-in-time.** No backtesting, and no track record of realised accuracy.
 
-Full methodology, formulas, and references are in [`PROPOSAL.md`](PROPOSAL.md).
+---
+
+## Disclaimer
+
+This is an educational and research project. Nothing it produces is investment advice,
+a recommendation to buy or sell any security, or an offer or solicitation of any kind.
+Outputs are generated automatically from unaudited public data and have not been
+reviewed by any registered investment adviser. Do not rely on them for investment
+decisions. The author accepts no liability for any use of this software or its output.
+
+---
+
+## License
+
+MIT — see `LICENSE`.
+
+Built by [Laraib Nisar Soomro](https://github.com/laraibnisarsoomro).
