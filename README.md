@@ -9,6 +9,10 @@ from an investor questionnaire using CAPM-based expected returns.
 
 It runs entirely on a laptop. No cloud account, no paid data subscription.
 
+![A ResearchIQ memo for AAPL](docs/memo-aapl-top.png)
+
+*Full examples: [AAPL](docs/memo-aapl-full.png) · [MU](docs/memo-mu-full.png)*
+
 ---
 
 ## The design question

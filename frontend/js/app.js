@@ -432,7 +432,7 @@ function renderReport(r, warnings) {
 
   // Footer
   html += `<div class="memo-footer">
-    Advanced Quant Methods Project by Laraib Nisar
+    ResearchIQ &middot; Laraib Nisar Soomro
   </div>`;
 
   html += `</div>`; // end memo

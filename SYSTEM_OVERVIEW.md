@@ -1,7 +1,6 @@
 # ResearchIQ — System Overview
 
-**Advanced Quantitative Methods & Machine Learning | Spring 2026**  
-**Laraib Nisar · Prof. Ali Sanati**
+**Laraib Nisar Soomro**
 
 ---
 
