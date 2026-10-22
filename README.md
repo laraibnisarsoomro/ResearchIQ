@@ -57,7 +57,8 @@ benchmarked against up to 40 sector peers. The portfolio builder uses CAPM expec
 returns with a bounded valuation alpha, and a beta-weighted risk model with an
 idiosyncratic component.
 
-`SYSTEM_OVERVIEW.md` has the full architecture.
+`SYSTEM_OVERVIEW.md` has the full architecture. `METHODOLOGY.md` covers the
+valuation formulas, the recommendation thresholds, findings and references.
 
 ---
 

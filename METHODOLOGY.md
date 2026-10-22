@@ -1,9 +1,7 @@
 # ResearchIQ: An Agentic AI Pipeline for Automated Equity Research Memo Generation
 
-**FIN-680 — Advanced Quantitative Methods and Machine Learning in Finance**
-**Student:** Laraib Nisar
-**Professor:** Ali Sanati
-**Date:** May 2026
+**Laraib Nisar Soomro**  
+*May 2026*
 
 ---
 
@@ -19,7 +17,7 @@ Equity research is one of the most labor-intensive products in institutional fin
 
 Large language models have demonstrated the ability to synthesize complex information and generate coherent financial prose. However, two critical concerns persist: (1) LLMs alone cannot reliably perform precise quantitative calculations — they hallucinate figures; and (2) LLM-only outputs are unauditable, making it impossible to verify whether a recommended valuation is based on real financial data. The research question therefore is not "can an LLM write research?" but rather: **can a hybrid system, where quantitative logic is executed deterministically and the LLM only writes prose, produce a research product that is both accurate and useful?**
 
-This question sits at the intersection of agentic AI workflows, portfolio construction theory, and applied quantitative finance — all course topics.
+This question sits at the intersection of agentic AI workflows, portfolio construction theory, and applied quantitative finance.
 
 ### 1.3 Applied Contribution
 
@@ -275,7 +273,7 @@ Expected range: 0.35–0.75, consistent with documented Sharpe ratios for instit
 
 ---
 
-## 4. Expected Findings and Evidence
+## 4. Findings and Evidence
 
 ### 4.1 Valuation Accuracy
 
@@ -283,7 +281,8 @@ The comparable-multiple approach is a standard practitioner technique, not an ML
 - The system's FV and the analyst consensus should agree in direction (upside/downside) in ~65–70% of cases, consistent with published findings on comparables-based valuation
 - Cases of disagreement typically reflect growth premiums that analyst models incorporate via forward estimates, which the system does not have access to
 
-**Demonstrated Results** (from live system testing):
+**Demonstrated Results** (live system run, May 2026). Prices and fair values are a
+point-in-time snapshot from that run, not current quotes:
 
 | Ticker | Current Price | System FV | Upside | Recommendation |
 |--------|-------------|-----------|--------|----------------|
@@ -371,7 +370,7 @@ The system has three concrete implications:
 
 ## Appendix: System Architecture and Screenshots
 
-*[Insert screenshots here — see guidance below]*
+Example output: [AAPL memo](docs/memo-aapl-full.png) · [MU memo](docs/memo-mu-full.png)
 
 ### A.1 System Architecture Diagram
 
@@ -408,18 +407,3 @@ User Input (Ticker Symbol)
 │  Progress bar → Equity Memo → Portfolio Builder          │
 └─────────────────────────────────────────────────────────┘
 ```
-
-### A.2 Screenshot Guide
-
-The following screenshots should be included in the final submission:
-
-1. **Landing Page** — shows the live market strip (S&P 500, NASDAQ, DOW, VIX), the search card, and the attribution bar
-2. **Progress Bar (mid-generation)** — shows the 7-stage pipeline progress as it streams in real time
-3. **Completed Equity Memo — Header** — shows ticker, company name, current price, fair value (low/base/high), upside %, and recommendation badge
-4. **Completed Equity Memo — Metrics Table** — shows the 19 financial ratios with company vs. sector median columns and above/below annotations
-5. **Price Return Chart** — shows 1-year cumulative return vs. S&P 500
-6. **Investment Thesis and Risks** — shows the LLM-generated thesis bullets, sector overview, key risks, and catalysts
-7. **Portfolio Builder Questionnaire** — shows the 5-section modal with investor profiling
-8. **Portfolio Memo** — shows the strategy header, investor profile, portfolio statistics (expected return, vol, Sharpe, beta), long book, and short book tables
-9. **Sector Backdrop** — shows the full-page ambient SVG pattern (e.g., circuit traces for Tech, skyscrapers for Financials)
-10. **Portfolio Gutter Visuals** — shows the sector donut chart and Sharpe gauge in the gutter panels when scrolled to portfolio section

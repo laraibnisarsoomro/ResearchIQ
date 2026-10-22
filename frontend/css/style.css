@@ -982,9 +982,6 @@ body.sector-comms {
   }
 }
 
-/* Course attribution — moved to bottom ticker tape (kept for legacy) */
-.course-attribution { display: none; }
-
 /* ── Floating ambient orbs (slow drift) ─────────────────────────────────── */
 .landing-orbs {
   position: absolute;
@@ -1301,11 +1298,6 @@ body.sector-comms {
   box-shadow: 0 8px 24px rgba(42,121,211,0.45);
 }
 #generate-btn:hover::after { transform: translateX(100%); }
-
-.course-divider {
-  margin: 0 .4rem;
-  opacity: 0.5;
-}
 
 /* ── Print styles ──────────────────────────────────────────────────────────── */
 @media print {
